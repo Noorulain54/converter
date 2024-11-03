@@ -4,7 +4,7 @@ pdf to word and jpg to pdf converter
 
 # PDF and JPG Converter
 
-This project is a simple web application that allows users to convert PDF files to Word documents and JPG images to PDF files. Built with HTML, JavaScript, and CSS, it provides an easy-to-use interface for quick conversions without needing any backend setup.
+This project is a simple web application that allows users to convert PDF files to Word documents and JPG images to PDF files. Built with HTML, JavaScript it provides an easy-to-use interface for quick conversions without needing any backend setup.
 
 ## Features
 
@@ -15,7 +15,6 @@ This project is a simple web application that allows users to convert PDF files 
 ## Technologies Used
 
 - **HTML**: For structuring the web pages.
-- **CSS (Inline Styles)**: For basic styling of buttons, layout, and fonts.
 - **JavaScript**: For handling file uploads, extracting text from PDFs, and creating PDF files.
 - **Libraries**:
   - `pdf.js`: For reading PDF files and extracting text content.
@@ -67,8 +66,6 @@ pdf-jpg-converter/
 ├── how-to-use.html       # How to Use page with instructions
 ├── converter.html        # Main conversion page
 ├── README.md             # Project documentation
-└── assets/               # Folder for images, icons, etc. (if any)
-```
 
 ## License
 
