@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF and Word Converter</title>
+</head>
+<body>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About Us</a>
+    <a href="how-to-use.html">How to Use</a>
+    <a href="converter.html">Converter</a>
+  </nav>
+
+  <h1>PDF Converter</h1>
+  <h3>Convert PDF to Word</h3>
+  <input type="file" id="pdfUpload" accept="application/pdf" />
+  <button onclick="convertToWord()">Convert to Word</button>
+  <p id="output">Extracted content will appear here...</p>
+
+  <h3>Convert JPG to PDF</h3>
+  <input type="file" id="imageUpload" accept="image/jpeg" />
+  <button onclick="convertImageToPDF()">Convert to PDF</button>
+
+  <!-- PDF.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <!-- pdf-lib for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <!-- FileSaver.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+  <script>
+    // PDF to Word conversion function
+    async function convertToWord() {
+      const fileInput = document.getElementById('pdfUpload').files[0];
+      const output = document.getElementById("output");
+
+      if (!fileInput) {
+        alert("Please upload a PDF file.");
+        return;
+      }
+
+      const originalName = fileInput.name.replace(/\.pdf$/i, ""); // Remove the .pdf extension
+      const fileReader = new FileReader();
+      
+      fileReader.onload = async function() {
+        const typedArray = new Uint8Array(this.result);
+        const pdfDoc = await pdfjsLib.getDocument(typedArray).promise;
+        let fullText = "";
+
+        for (let i = 1; i <= pdfDoc.numPages; i++) {
+          const page = await pdfDoc.getPage(i);
+          const textContent = await page.getTextContent();
+          textContent.items.forEach((item) => {
+            fullText += item.str + " ";
+          });
+          fullText += "\n\n";
+        }
+
+        output.innerText = "Extraction complete! Downloading as DOC file...";
+        const blob = new Blob([fullText], { type: "application/msword" });
+        saveAs(blob, `${originalName}.doc`);
+      };
+      
+      fileReader.readAsArrayBuffer(fileInput);
+    }
+
+    // JPG to PDF conversion function
+    async function convertImageToPDF() {
+      const imageInput = document.getElementById('imageUpload').files[0];
+      if (!imageInput) {
+        alert("Please upload a JPG image.");
+        return;
+      }
+
+      const originalName = imageInput.name.replace(/\.(jpg|jpeg)$/i, ""); // Remove .jpg or .jpeg extension
+      const imageArrayBuffer = await imageInput.arrayBuffer();
+      const pdfDoc = await PDFLib.PDFDocument.create();
+      const jpgImage = await pdfDoc.embedJpg(imageArrayBuffer);
+      
+      const page = pdfDoc.addPage([jpgImage.width, jpgImage.height]);
+      page.drawImage(jpgImage, {
+        x: 0,
+        y: 0,
+        width: jpgImage.width,
+        height: jpgImage.height,
+      });
+
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: "application/pdf" });
+      saveAs(blob, `${originalName}.pdf`);
+    }
+  </script>
+</body>
+</html>
